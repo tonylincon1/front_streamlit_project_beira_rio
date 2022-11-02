@@ -28,7 +28,7 @@ st.markdown(
 """
 )
 
-with open("pages/Projeto Beira Rio - IA para Reconhecimento de Imagens.pdf","rb") as f:
+with open("files/Projeto Beira Rio - IA para Reconhecimento de Imagens.pdf","rb") as f:
     base64_pdf = base64.b64encode(f.read()).decode('utf-8')
 pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="500" type="application/pdf"></iframe>'
       
