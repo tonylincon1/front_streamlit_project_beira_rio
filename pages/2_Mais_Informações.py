@@ -1,20 +1,17 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import base64
 
 st.set_page_config(
     page_title="IA Calçados Beira Rio",
     page_icon="👞",
 )
 
+with open('files/css/styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 st.title('Uber pickups in NYC')
-
-st.sidebar.selectbox(
-    "What's your favorite movie genre",
-    ('Comedy', 'Drama', 'Documentary')
-)
-
-st.file_uploader("Choose a file", type=['png', 'jpg'], accept_multiple_files=False)
 
 st.markdown(
     """
@@ -33,3 +30,9 @@ st.markdown(
     - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
 """
 )
+
+with open("files/Projeto Beira Rio - IA para Reconhecimento de Imagens.pdf","rb") as f:
+    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="500" type="application/pdf"></iframe>'
+      
+st.markdown(pdf_display, unsafe_allow_html=True)

@@ -7,7 +7,17 @@ st.set_page_config(
     page_icon="👞",
 )
 
+with open('files/css/styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 st.title('Uber pickups in NYC')
+
+st.sidebar.selectbox(
+    "What's your favorite movie genre",
+    ('Comedy', 'Drama', 'Documentary')
+)
+
+st.file_uploader("Choose a file", type=['png', 'jpg'], accept_multiple_files=False)
 
 st.markdown(
     """
