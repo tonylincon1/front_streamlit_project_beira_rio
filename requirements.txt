@@ -93,7 +93,6 @@ notebook==6.4.12
 notebook-shim==0.1.0
 numpy==1.23.4
 oauthlib==3.2.2
-object-detection @ file:///D:/Arquivos%20-%20Ant%C3%B4nio/Profissional/Servi%C3%A7os/Insidergic/Beira%20Rio/front/models/research/object_detection/packages/tf1
 opencv-python==4.6.0.66
 opt-einsum==3.3.0
 packaging==21.3

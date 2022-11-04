@@ -3,8 +3,6 @@ import os
 import cv2
 import numpy as np
 import pandas as pd
-#from object_detection.utils import label_map_util
-#from object_detection.utils import visualization_utils as vis_util
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
