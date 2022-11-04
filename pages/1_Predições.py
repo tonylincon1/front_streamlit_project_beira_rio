@@ -1,8 +1,6 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
 from outhers.detect_objet import *
 
 def load_image(image_file):
@@ -11,7 +9,6 @@ def load_image(image_file):
 
 def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
-    #pilImage = Image.fromarray(predict, "RGB")
     pilImage = Image.fromarray((predict * 1).astype(np.uint8)).convert('RGB')
     st.image(pilImage)
 

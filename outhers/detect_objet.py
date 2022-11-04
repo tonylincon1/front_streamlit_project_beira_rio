@@ -2,15 +2,14 @@ import tensorflow as tf
 import os
 import cv2
 import numpy as np
-import pandas as pd
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
 # Path to frozen detection graph .pb file, which contains the model that is used
 # for object detection.
-PATH_TO_CKPT = 'shoeDetection/Python inference/frozen_inference_graph.pb'
+PATH_TO_CKPT = 'outhers/frozen_inference_graph.pb'
 # Path to label map file
-PATH_TO_LABELS = 'shoeDetection/Python inference/label_map.pbtxt'
+PATH_TO_LABELS = 'outhers/label_map.pbtxt'
 # Number of classes the object detector can identify
 NUM_CLASSES = 1
 
