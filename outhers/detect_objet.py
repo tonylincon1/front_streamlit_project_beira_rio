@@ -74,7 +74,6 @@ def trat_detect_objet_extract (input_image):
         img=cv2.resize(img,(500,500))
         img=img.astype('float32')
         img=img.reshape(500,500,3)
-        img=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         list_images.append(img)
         contador = contador + 1
 

@@ -9,7 +9,7 @@ def load_image(image_file):
 
 def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
-    pilImage = Image.fromarray((predict * 1).astype(np.uint8)).convert('RGB')
+    pilImage = Image.fromarray((predict).astype(np.uint8))
     st.image(pilImage)
 
 st.set_page_config(
