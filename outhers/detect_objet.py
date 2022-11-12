@@ -71,9 +71,9 @@ def trat_detect_objet_extract (input_image):
         img = np.array(input_image[ymin:ymax,xmin:xmax])
 
         #Resize
-        img=cv2.resize(img,(500,500))
+        img=cv2.resize(img,(224,224))
         img=img.astype('float32')
-        img=img.reshape(500,500,3)
+        img=img.reshape(224,224,3)
         list_images.append(img)
         contador = contador + 1
 
