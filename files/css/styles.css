@@ -6,6 +6,11 @@
     justify-content: center;
 }
 
+.row-widget.stButton {
+    justify-content: center;
+    display: flex;
+}
+
 .css-fis6aj.exg6vvm10 {
     display: none;
 }

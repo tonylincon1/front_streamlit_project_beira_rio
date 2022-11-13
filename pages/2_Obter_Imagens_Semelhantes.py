@@ -6,8 +6,9 @@ import requests
 import jsonpickle
 from Entrar import check_password
 
-url_color = 'http://127.0.0.1:5000/predict_recomendation'
-url_gray = 'http://127.0.0.1:5000/predict_recomendation_gray'
+endereco = 'http://0dbc-34-73-67-97.ngrok.io'
+url_color = f'{endereco}/predict_recomendation'
+url_gray = f'{endereco}/predict_recomendation_gray'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
@@ -19,6 +20,31 @@ def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
     pilImage = Image.fromarray((predict).astype(np.uint8))
     st.image(pilImage)
+    
+def criar_subimagem_predict(predict,contador):
+    st.markdown(f"<h6 style='text-align:center'>Essa é a predição: {contador} <br></h6>", unsafe_allow_html=True)
+    pilImage = Image.fromarray((predict).astype(np.uint8))
+    st.image(pilImage)
+
+def plot_subimagem(predict_ia,init,fim,contador):
+    col9,col10,col11,col12 = st.columns(4)
+    for predict in predict_ia[init:fim]:
+        if contador == 1:
+            with col9:
+                criar_subimagem_predict(predict,contador)
+                contador = contador + 1
+        elif contador == 2:
+            with col10:
+                criar_subimagem_predict(predict,contador)
+                contador = contador + 1
+        elif contador == 3:
+            with col11:
+                criar_subimagem_predict(predict,contador)
+                contador = contador + 1
+        elif contador == 4:
+            with col12:
+                criar_subimagem_predict(predict,contador)
+                contador = contador + 1
 
 st.set_page_config(
     page_title="Predições",
@@ -83,30 +109,88 @@ if check_password():
                                 range(1,quant_detection+1))
         with col8:
             quantas_imagens = st.selectbox("Quantas imagens de referência deseja?",
-                                (5, 10, 20, 30, 40, 50))
+                                (6, 10, 20, 30, 40, 50))
         
-        if st.button("Enviar"):
+        if st.button("Obter Imagens Semelhantes"):
             _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
             lista_envio = [quantas_imagens,img_encoded]
             predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
+            
             if predict_ia.status_code == 200:
+                st.markdown("***")
+                st.markdown(f"<h5 style='text-align:left'>Aqui estão {int(quantas_imagens/2)} imagens semelhantes nos aspectos de <u>cor e formato</u>: <br></h5>", unsafe_allow_html=True)
                 predict_ia = jsonpickle.decode(predict_ia.text)
-                for image in predict_ia:
-                    st.markdown(image)
-                    image_api = Image.fromarray((image).astype(np.uint8))
-                    st.image(image_api)
+                
+                contador = 1
+                if int(quantas_imagens/2) == 3:
+                    plot_subimagem(predict_ia,0,4,contador)
+                elif int(quantas_imagens/2) == 5:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                elif int(quantas_imagens/2) == 10:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                elif int(quantas_imagens/2) == 15:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                elif int(quantas_imagens/2) == 20:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                    plot_subimagem(predict_ia,16,20,contador)
+                elif int(quantas_imagens/2) == 25:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                    plot_subimagem(predict_ia,16,20,contador)
+                    plot_subimagem(predict_ia,20,24,contador)
+                    plot_subimagem(predict_ia,24,24,contador)
+                
             else:
                 st.markdown(f"<h5 style='text-align:center; color:red'>Olá, houve algum problema, por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
             
             _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-            img_encoded=img_encoded.reshape(224,224,1)
             lista_envio = [quantas_imagens,img_encoded]
             predict_ia = requests.post(url_gray, data=jsonpickle.encode(lista_envio), headers=headers)
             if predict_ia.status_code == 200:
+                st.markdown("***")
+                st.markdown(f"<h5 style='text-align:left'>Aqui estão {int(quantas_imagens/2)} imagens semelhantes nos aspectos de <u>formato</u>: <br></h5>", unsafe_allow_html=True)
                 predict_ia = jsonpickle.decode(predict_ia.text)
-                for image in predict_ia:
-                    st.markdown(image)
-                    image_api = Image.fromarray((image).astype(np.uint8))
-                    st.image(image_api)
+                
+                contador = 1
+                if int(quantas_imagens/2) == 3:
+                    plot_subimagem(predict_ia,0,4,contador)
+                elif int(quantas_imagens/2) == 5:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                elif int(quantas_imagens/2) == 10:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                elif int(quantas_imagens/2) == 15:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                elif int(quantas_imagens/2) == 20:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                    plot_subimagem(predict_ia,16,20,contador)
+                elif int(quantas_imagens/2) == 25:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                    plot_subimagem(predict_ia,16,20,contador)
+                    plot_subimagem(predict_ia,20,24,contador)
+                    plot_subimagem(predict_ia,24,24,contador)
+                    
             else:
                 st.markdown(f"<h5 style='text-align:center; color:red'>Olá, houve algum problema, por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
