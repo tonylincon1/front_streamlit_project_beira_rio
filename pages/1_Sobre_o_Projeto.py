@@ -12,6 +12,8 @@ st.set_page_config(
 with open('files/css/styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
+st.sidebar.image("files/images/logo.png", use_column_width=True)
+    
 if check_password():
     
     st.markdown("""<h1 style="text-align:center">Projeto Beira Rio <br> IA para Reconhecimento de Imagens</h1>""", unsafe_allow_html=True)
@@ -29,10 +31,6 @@ if check_password():
                     <li>Desenvolvimento do algoritmo de extração de características e clusterização;</li>
                     <li>Implantação e testes.</li>
                 </ul>""", unsafe_allow_html=True)
-    st.markdown("""<p style="text-align:justify"><strong>Conhecimento e tratamento da banco de imagens:</strong></p>""", unsafe_allow_html=True)
-    st.markdown("""<p style="text-align:justify"><strong>Limpeza do banco de imagens:</strong></p>""", unsafe_allow_html=True)
-    st.markdown("""<p style="text-align:justify"><strong>Desenvolvimento do algoritmo de extração de características e clusterização:</strong></p>""", unsafe_allow_html=True)
-    st.markdown("""<p style="text-align:justify"><strong>Implantação e testes:</strong></p>""", unsafe_allow_html=True)
 
     st.markdown("<h3>3) Parceria 🥾<br></h3>", unsafe_allow_html=True)
     image = Image.open('files/images/parceria.png')

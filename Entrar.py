@@ -11,6 +11,8 @@ with open('files/css/styles.css') as f:
 st.markdown("""<h1 style="text-align:center">IA para Obtenção de Calçados Semelhantes</h1>""", unsafe_allow_html=True)
 st.markdown("***")
 
+st.sidebar.image("files/images/logo.png", use_column_width=True)
+
 def check_password():
 
     def password_entered():
