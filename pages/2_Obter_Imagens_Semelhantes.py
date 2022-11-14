@@ -6,7 +6,7 @@ import requests
 import jsonpickle
 from Entrar import check_password
 
-endereco = 'http://0dbc-34-73-67-97.ngrok.io'
+endereco = 'http://86c6-34-75-154-40.ngrok.io'
 url_color = f'{endereco}/predict_recomendation'
 url_gray = f'{endereco}/predict_recomendation_gray'
 content_type = 'image/jpeg'
@@ -115,82 +115,59 @@ if check_password():
             _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
             lista_envio = [quantas_imagens,img_encoded]
             predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
-            
             if predict_ia.status_code == 200:
                 st.markdown("***")
-                st.markdown(f"<h5 style='text-align:left'>Aqui estão {int(quantas_imagens/2)} imagens semelhantes nos aspectos de <u>cor e formato</u>: <br></h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align:left'>Aqui estão {int(quantas_imagens)} imagens semelhantes nos aspectos de <u>cor e formato</u>: <br></h5>", unsafe_allow_html=True)
                 predict_ia = jsonpickle.decode(predict_ia.text)
                 
                 contador = 1
-                if int(quantas_imagens/2) == 3:
-                    plot_subimagem(predict_ia,0,4,contador)
-                elif int(quantas_imagens/2) == 5:
+                if int(quantas_imagens) == 6:
                     plot_subimagem(predict_ia,0,4,contador)
                     plot_subimagem(predict_ia,4,8,contador)
-                elif int(quantas_imagens/2) == 10:
+                elif int(quantas_imagens) == 10:
                     plot_subimagem(predict_ia,0,4,contador)
                     plot_subimagem(predict_ia,4,8,contador)
                     plot_subimagem(predict_ia,8,12,contador)
-                elif int(quantas_imagens/2) == 15:
-                    plot_subimagem(predict_ia,0,4,contador)
-                    plot_subimagem(predict_ia,4,8,contador)
-                    plot_subimagem(predict_ia,8,12,contador)
-                    plot_subimagem(predict_ia,12,16,contador)
-                elif int(quantas_imagens/2) == 20:
+                elif int(quantas_imagens) == 20:
                     plot_subimagem(predict_ia,0,4,contador)
                     plot_subimagem(predict_ia,4,8,contador)
                     plot_subimagem(predict_ia,8,12,contador)
                     plot_subimagem(predict_ia,12,16,contador)
                     plot_subimagem(predict_ia,16,20,contador)
-                elif int(quantas_imagens/2) == 25:
+                elif int(quantas_imagens) == 30:
                     plot_subimagem(predict_ia,0,4,contador)
                     plot_subimagem(predict_ia,4,8,contador)
                     plot_subimagem(predict_ia,8,12,contador)
                     plot_subimagem(predict_ia,12,16,contador)
                     plot_subimagem(predict_ia,16,20,contador)
                     plot_subimagem(predict_ia,20,24,contador)
-                    plot_subimagem(predict_ia,24,24,contador)
-                
-            else:
-                st.markdown(f"<h5 style='text-align:center; color:red'>Olá, houve algum problema, por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
-            
-            _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-            lista_envio = [quantas_imagens,img_encoded]
-            predict_ia = requests.post(url_gray, data=jsonpickle.encode(lista_envio), headers=headers)
-            if predict_ia.status_code == 200:
-                st.markdown("***")
-                st.markdown(f"<h5 style='text-align:left'>Aqui estão {int(quantas_imagens/2)} imagens semelhantes nos aspectos de <u>formato</u>: <br></h5>", unsafe_allow_html=True)
-                predict_ia = jsonpickle.decode(predict_ia.text)
-                
-                contador = 1
-                if int(quantas_imagens/2) == 3:
-                    plot_subimagem(predict_ia,0,4,contador)
-                elif int(quantas_imagens/2) == 5:
-                    plot_subimagem(predict_ia,0,4,contador)
-                    plot_subimagem(predict_ia,4,8,contador)
-                elif int(quantas_imagens/2) == 10:
-                    plot_subimagem(predict_ia,0,4,contador)
-                    plot_subimagem(predict_ia,4,8,contador)
-                    plot_subimagem(predict_ia,8,12,contador)
-                elif int(quantas_imagens/2) == 15:
-                    plot_subimagem(predict_ia,0,4,contador)
-                    plot_subimagem(predict_ia,4,8,contador)
-                    plot_subimagem(predict_ia,8,12,contador)
-                    plot_subimagem(predict_ia,12,16,contador)
-                elif int(quantas_imagens/2) == 20:
-                    plot_subimagem(predict_ia,0,4,contador)
-                    plot_subimagem(predict_ia,4,8,contador)
-                    plot_subimagem(predict_ia,8,12,contador)
-                    plot_subimagem(predict_ia,12,16,contador)
-                    plot_subimagem(predict_ia,16,20,contador)
-                elif int(quantas_imagens/2) == 25:
+                    plot_subimagem(predict_ia,24,28,contador)
+                    plot_subimagem(predict_ia,28,32,contador)
+                elif int(quantas_imagens) == 40:
                     plot_subimagem(predict_ia,0,4,contador)
                     plot_subimagem(predict_ia,4,8,contador)
                     plot_subimagem(predict_ia,8,12,contador)
                     plot_subimagem(predict_ia,12,16,contador)
                     plot_subimagem(predict_ia,16,20,contador)
                     plot_subimagem(predict_ia,20,24,contador)
-                    plot_subimagem(predict_ia,24,24,contador)
-                    
+                    plot_subimagem(predict_ia,24,28,contador)
+                    plot_subimagem(predict_ia,28,32,contador)
+                    plot_subimagem(predict_ia,32,36,contador)
+                    plot_subimagem(predict_ia,36,40,contador)
+                elif int(quantas_imagens) == 50:
+                    plot_subimagem(predict_ia,0,4,contador)
+                    plot_subimagem(predict_ia,4,8,contador)
+                    plot_subimagem(predict_ia,8,12,contador)
+                    plot_subimagem(predict_ia,12,16,contador)
+                    plot_subimagem(predict_ia,16,20,contador)
+                    plot_subimagem(predict_ia,20,24,contador)
+                    plot_subimagem(predict_ia,24,28,contador)
+                    plot_subimagem(predict_ia,28,32,contador)
+                    plot_subimagem(predict_ia,32,36,contador)
+                    plot_subimagem(predict_ia,36,40,contador)
+                    plot_subimagem(predict_ia,40,44,contador)
+                    plot_subimagem(predict_ia,44,48,contador)
+                    plot_subimagem(predict_ia,48,50,contador)
+                
             else:
                 st.markdown(f"<h5 style='text-align:center; color:red'>Olá, houve algum problema, por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
