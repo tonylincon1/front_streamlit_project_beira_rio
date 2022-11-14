@@ -24,6 +24,8 @@ if check_password():
     with open("files/Projeto Beira Rio - IA para Reconhecimento de Imagens.pdf","rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="500" type="application/pdf"></iframe>'
+    with open("files/Projeto Beira Rio - IA para Reconhecimento de Imagens.pdf","rb") as f:
+        st.download_button("Download Material", f,file_name="IA para Obtenção de Calçados Semelhantes.pdf")
     st.markdown(pdf_display, unsafe_allow_html=True)
     
     st.markdown("***")

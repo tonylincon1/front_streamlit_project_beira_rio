@@ -11,6 +11,11 @@
     display: flex;
 }
 
+.row-widget.stDownloadButton {
+    justify-content: right;
+    display: flex;
+}
+
 .css-fis6aj.exg6vvm10 {
     display: none;
 }
