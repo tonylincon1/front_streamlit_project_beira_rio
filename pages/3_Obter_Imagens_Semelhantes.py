@@ -6,7 +6,7 @@ import requests
 import jsonpickle
 from Entrar import check_password
 
-endereco = 'http://b368-34-122-72-86.ngrok.io'
+endereco = 'http://54.83.166.236'
 url_color = f'{endereco}/predict_recomendation'
 url_gray = f'{endereco}/predict_recomendation_gray'
 content_type = 'image/jpeg'
