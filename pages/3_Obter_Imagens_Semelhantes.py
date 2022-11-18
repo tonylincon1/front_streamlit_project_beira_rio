@@ -65,7 +65,7 @@ if check_password():
 
     st.markdown("<h3>1) Importe aqui a imagem dos seus calçados 👞<br></h3>", unsafe_allow_html=True)
 
-    foto_predict = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg'], accept_multiple_files=False)
+    foto_predict = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg', 'jpeg','jfif'], accept_multiple_files=False)
 
     if foto_predict:
         st.markdown(f"<h5 style='text-align:center'>Você importou a imagem: {foto_predict.name}<br></h5>", unsafe_allow_html=True)
