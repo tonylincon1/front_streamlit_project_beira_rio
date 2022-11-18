@@ -14,7 +14,7 @@ st.markdown("***")
 st.sidebar.image("files/images/logo.png", use_column_width=True)
 
 def check_password():
-
+    
     def password_entered():
         if (st.session_state["username"] in st.secrets["passwords"] and st.session_state["password"] == st.secrets["passwords"][st.session_state["username"]]):
             st.session_state["password_correct"] = True

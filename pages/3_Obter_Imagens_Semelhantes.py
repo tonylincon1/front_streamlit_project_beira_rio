@@ -1,14 +1,15 @@
-import streamlit as st
-import numpy as np
-from PIL import Image
-from outhers.detect_objet import *
+import cv2
+import time
 import requests
 import jsonpickle
+import numpy as np
+from PIL import Image
+import streamlit as st
 from Entrar import check_password
+from outhers.detect_objet import *
 
 endereco = 'http://54.83.166.236'
-url_color = f'{endereco}/predict_recomendation'
-url_gray = f'{endereco}/predict_recomendation_gray'
+url_color = f'{endereco}/predict_recomendation_streamlit'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
@@ -72,7 +73,8 @@ if check_password():
         foto_predict = np.array(load_image(foto_predict))
         
         #Retorno detecção
-        foto_com_detectada = trat_detect_objet_extract(foto_predict)
+        with st.spinner('Carregando Detecções'):
+            foto_com_detectada = trat_detect_objet_extract(foto_predict)
         quant_detection = len(foto_com_detectada)
         st.markdown(f"<h5 style='text-align:left'>Foram detectados {quant_detection} objetos, Esses foram os objetos detectados: <br></h5>", unsafe_allow_html=True)
         
@@ -116,12 +118,14 @@ if check_password():
                                 (6, 10, 20, 30, 40, 50))
         
         if st.button("Obter Imagens Semelhantes"):
-            _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-            lista_envio = [quantas_imagens,img_encoded]
-            predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
+            with st.spinner('Carregando Imagens Semelhantes'):
+                _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
+                lista_envio = [quantas_imagens,img_encoded]
+                predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
             if predict_ia.status_code == 200:
                 st.markdown("***")
-                st.markdown(f"<h5 style='text-align:left'>Aqui estão as {int(quantas_imagens)} imagens semelhantes nos aspectos de <u style='color:red;'>cor e formato</u>: <br></h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align:left'>Aqui estão as {int(quantas_imagens)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
+                st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
                 predict_ia = jsonpickle.decode(predict_ia.text)
                 
                 contador = 1
@@ -174,4 +178,4 @@ if check_password():
                     plot_subimagem(predict_ia,48,50,contador)
                 
             else:
-                st.markdown(f"<h5 style='text-align:center; color:red'>Olá, houve algum problema, por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
