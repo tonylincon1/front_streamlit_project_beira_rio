@@ -9,7 +9,7 @@ import streamlit as st
 from Entrar import check_password
 from outhers.detect_objet import *
 
-endereco = 'http://127.0.0.1'
+endereco = 'http://54.83.166.236'
 url_color = f'{endereco}/predict_recomendation_streamlit'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
