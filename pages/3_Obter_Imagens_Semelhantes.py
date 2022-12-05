@@ -3,15 +3,21 @@ import time
 import requests
 import jsonpickle
 import numpy as np
+import pandas as pd
 from PIL import Image
 import streamlit as st
 from Entrar import check_password
 from outhers.detect_objet import *
 
-endereco = 'http://54.83.166.236'
+endereco = 'http://127.0.0.1'
 url_color = f'{endereco}/predict_recomendation_streamlit'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
+
+def process_image_download_file(image_file):
+    pilImage = Image.fromarray((image_file).astype(np.uint8))
+    st.markdown(pilImage)
+    return pilImage
 
 def load_image(image_file):
     img = Image.open(image_file)
@@ -24,8 +30,8 @@ def criar_subimagem(predict,contador):
     
 def criar_subimagem_predict(predict,contador):
     st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[2].split(" ")[1] + '-' + predict[2].split(" ")[2] + '-' + predict[2].split(" ")[3]}<br></p>""", unsafe_allow_html=True)
-    pilImage = Image.fromarray((predict[1]).astype(np.uint8))
-    st.image(pilImage)
+    #pilImage = Image.fromarray((predict[1]).astype(np.uint8))
+    st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
 
 def plot_subimagem(predict_ia,init,fim,contador):
     col9,col10,col11,col12 = st.columns(4)
