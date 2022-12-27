@@ -38,7 +38,7 @@ def criar_subimagem_predict(predict,contador):
     if botao_avaliacao:
         #Chamar a função que vai pesquisar a imagem no s3 (Ainda preciso criar essa função)
         #Unir a imagem enviada com a imagem a predizer
-        #Reduzir dimensionalidade da imagem para camada flaten
+        #Redimensionar imagem para 224x224x3 e transformar em array
         #Enviar array da imagem + nota avaliada para banco ou armazenamento previo
         st.markdown(nota, unsafe_allow_html=True)
 
