@@ -1,14 +1,19 @@
 import cv2
-import boto3
+import keras
 import requests
 import jsonpickle
 import numpy as np
 from PIL import Image
 import streamlit as st
+from numpy import expand_dims
 from matplotlib import pyplot as plt
+from outhers.conect_data import read_image_from_s3, envia_avaliacao_para_banco, salvar_avaliacoes_pkl
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+
+model = keras.models.load_model('outhers/vgg_16_coleta_array_image_avaliacao.h5')
 
 #Elementos Gerais
-
 def process_image_download_file(image_file):
     pilImage = Image.fromarray((image_file).astype(np.uint8))
     st.markdown(pilImage)
@@ -18,44 +23,22 @@ def load_image(image_file):
     img = Image.open(image_file)
     return img
 
-def read_image_from_s3(bucket, key):
-    """Load image file from s3.
-
-    Parameters
-    ----------
-    bucket: string
-        Bucket name
-    key : string
-        Path in s3
-
-    Returns
-    -------
-    np array
-        Image array
-    """
-    session = boto3.Session(aws_access_key_id="AKIA4NNAOZHLTIHZSIRV",aws_secret_access_key="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")
-    s3 = session.resource('s3')
-    bucket = s3.Bucket(bucket)
-    object = bucket.Object(key)
-    response = object.get()
-    file_stream = response['Body']
-    im = Image.open(file_stream)
-    im = np.array(im).astype(np.uint8)
-    im = cv2.resize(im, (224,224))
-    return im
-
 #Detecção das Imagens Semelhantes
-
 def gerar_uniao_de_imagens(image_enviada,image_predita):
     images = [image_enviada.astype(np.uint8),image_predita]
-    fig, axes = plt.subplots(1,2, figsize=(5,5))
+    fig, axes = plt.subplots(1,2, figsize=(2.24,2.24))
     for i,ax in enumerate(axes.flat):
         ax.imshow(images[i])
         ax.axis('off')
     fig.canvas.draw()
-    im = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-    #Verificar como transformar imagem plt em array
+    im = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+    im = im.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return im
+
+def reduz_imagem_de_avaliacao_para_envio(fig):
+    fig = expand_dims(fig, axis=0)
+    fig = model.predict(fig)
+    return fig
     
 def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
@@ -64,21 +47,24 @@ def criar_subimagem(predict,contador):
 
 def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia):
     st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[2].split(" ")[1] + '-' + predict[2].split(" ")[2] + '-' + predict[2].split(" ")[3]}<br></p>""", unsafe_allow_html=True)
-    nota = st.selectbox("Nota (1 = Ruim e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
-    botao_avaliacao = st.button('Avaliar Predição',key=predict[0]+'_button')
-    #pilImage = Image.fromarray((predict[1]).astype(np.uint8))
-    st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
-    
-    if botao_avaliacao:
-        st.markdown(predict[0], unsafe_allow_html=True)
-        image_enviada = foto_com_detectada[imagem_referencia-1]
-        image_predita = read_image_from_s3("beirario-imagens",predict[0])
-        fig = gerar_uniao_de_imagens(image_enviada,image_predita)
-        st.markdown(fig.shape)
-        #Transformar imagem em array
-        #Reduzir dimensionalidade da imagem
-        #Enviar array da imagem + nota avaliada para banco ou armazenamento previo
-        st.markdown(nota, unsafe_allow_html=True)
+    with st.spinner('Enviando Avaliação'):
+        my_slot1 = st.empty()
+        my_slot2 = st.empty()
+        my_slot3 = st.empty()
+        nota = my_slot1.selectbox("Nota (1 = Ruim e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
+        botao_avaliacao = my_slot2.button('Avaliar Predição',key=predict[0]+'_button')
+        my_slot3.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
+        
+        if botao_avaliacao:
+            image_enviada = foto_com_detectada[imagem_referencia-1]
+            image_predita = read_image_from_s3("beirario-imagens",predict[0])
+            fig = gerar_uniao_de_imagens(image_enviada,image_predita)
+            array_imagem_reduzido = reduz_imagem_de_avaliacao_para_envio(fig)
+            salvar_avaliacoes_pkl(array_imagem_reduzido[-1],nota)
+            my_slot1.empty(), my_slot2.empty(), my_slot3.empty()
+            st.markdown("<p class='avaliacao'>Avaliação enviada!</p>", unsafe_allow_html=True)
+            st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
+            #envia_avaliacao_para_banco(array_imagem_reduzido,nota)
         
 def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_referencia):
     col9,col10,col11,col12 = st.columns(4)
