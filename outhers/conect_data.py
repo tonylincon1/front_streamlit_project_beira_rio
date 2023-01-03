@@ -37,8 +37,12 @@ def envia_avaliacao_para_banco():
 
 def salvar_avaliacoes_pkl(array_imagem_reduzido,nota):
     """Essa função é somente para armazenar no processo de teste, porém quando conectarmos com o banco será removida"""
-    data_pickle = load(open('outhers/datapickle.pkl', 'rb'))
-    data = pd.DataFrame([[array_imagem_reduzido.astype(np.uint8),nota]],columns=["data","nota"])
-    data_armazen = pd.concat([data_pickle,data])
-    data_armazen.to_pickle('outhers/datapickle.pkl')
+    try:
+        data_pickle = load(open('outhers/datapickle.pkl', 'rb'))
+        data = pd.DataFrame([[array_imagem_reduzido.astype(np.uint8),nota]],columns=["data","nota"])
+        data_armazen = pd.concat([data_pickle,data])
+        data_armazen.to_pickle('outhers/datapickle.pkl')
+    except:
+        data = pd.DataFrame([[array_imagem_reduzido.astype(np.uint8),nota]],columns=["data","nota"])
+        data.to_pickle('outhers/datapickle.pkl')
     

@@ -11,8 +11,6 @@ from outhers.conect_data import read_image_from_s3, envia_avaliacao_para_banco, 
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 
-model = keras.models.load_model('outhers/vgg_16_coleta_array_image_avaliacao.h5')
-
 #Elementos Gerais
 def process_image_download_file(image_file):
     pilImage = Image.fromarray((image_file).astype(np.uint8))
@@ -34,11 +32,6 @@ def gerar_uniao_de_imagens(image_enviada,image_predita):
     im = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
     im = im.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return im
-
-def reduz_imagem_de_avaliacao_para_envio(fig):
-    fig = expand_dims(fig, axis=0)
-    fig = model.predict(fig)
-    return fig
     
 def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
@@ -50,20 +43,17 @@ def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referenci
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
         my_slot2 = st.empty()
-        my_slot3 = st.empty()
         nota = my_slot1.selectbox("Nota (1 = Ruim e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
         botao_avaliacao = my_slot2.button('Avaliar Predição',key=predict[0]+'_button')
-        my_slot3.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
+        st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
         
         if botao_avaliacao:
             image_enviada = foto_com_detectada[imagem_referencia-1]
             image_predita = read_image_from_s3("beirario-imagens",predict[0])
             fig = gerar_uniao_de_imagens(image_enviada,image_predita)
-            array_imagem_reduzido = reduz_imagem_de_avaliacao_para_envio(fig)
-            salvar_avaliacoes_pkl(array_imagem_reduzido[-1],nota)
-            my_slot1.empty(), my_slot2.empty(), my_slot3.empty()
-            st.markdown("<p class='avaliacao'>Avaliação enviada!</p>", unsafe_allow_html=True)
-            st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
+            salvar_avaliacoes_pkl(fig,nota)
+            my_slot1.empty(), my_slot2.empty()
+            st.markdown("<p class='avaliacao'>✅ Avaliação enviada!</p>", unsafe_allow_html=True)
             #envia_avaliacao_para_banco(array_imagem_reduzido,nota)
         
 def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_referencia):
