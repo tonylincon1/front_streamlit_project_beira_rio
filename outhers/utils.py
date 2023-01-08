@@ -39,13 +39,14 @@ def criar_subimagem(predict,contador):
     st.image(pilImage)
 
 def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia):
-    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[2].split(" ")[1] + '-' + predict[2].split(" ")[2] + '-' + predict[2].split(" ")[3]}<br></p>""", unsafe_allow_html=True)
+    print(predict)
+    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[4].split(" ")[1] + '-' + predict[4].split(" ")[2] + '-' + predict[4].split(" ")[3]}<br></p>""", unsafe_allow_html=True)
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
         my_slot2 = st.empty()
-        nota = my_slot1.selectbox("Nota (1 = Ruim e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
+        nota = my_slot1.selectbox("Nota (1 = Ruim, 3 = Aceitável e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
         botao_avaliacao = my_slot2.button('Avaliar Predição',key=predict[0]+'_button')
-        st.markdown(f""" <img class="image_predict" src="{predict[1]}">""", unsafe_allow_html=True)
+        st.markdown(f""" <img class="image_predict" src="{predict[3]}">""", unsafe_allow_html=True)
         
         if botao_avaliacao:
             image_enviada = foto_com_detectada[imagem_referencia-1]
@@ -77,9 +78,9 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
                 contador = contador + 1
                 
 @st.cache
-def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,url_color,headers):
+def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,recomendacao,notas,url_color,headers):
     with st.spinner('Carregando Imagens Semelhantes'):
         _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-        lista_envio = [quantas_imagens,img_encoded]
+        lista_envio = [quantas_imagens,img_encoded,recomendacao,notas]
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia

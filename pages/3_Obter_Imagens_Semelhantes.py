@@ -9,7 +9,7 @@ from Entrar import check_password
 from outhers.detect_objet import *
 from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes
 
-endereco = 'http://54.83.166.236'
+endereco = 'http://127.0.0.1:80'
 url_color = f'{endereco}/predict_recomendation_streamlit'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
@@ -76,21 +76,30 @@ if check_password():
                     criar_subimagem(predict,contador)
                     contador = contador + 1
         
-        col7,col8 = st.columns(2)
+        col7,col8,col9 = st.columns(3)
         with col7:
             imagem_referencia = st.selectbox("Qual a imagem que deseja utilizar como referência?",
                                 range(1,quant_detection+1))
         with col8:
             quantas_imagens = st.selectbox("Quantas imagens de referência deseja?",
                                 (6, 10, 20, 30, 40, 50))
+        with col9:
+            recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
+                                ('Sim', 'Não'))
+            notas = st.selectbox("Imagens semelhantes com avaliações iguais a?",
+                                    (1,2,3,4,5),index=2)
                     
-        predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,url_color,headers)
+        predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,recomendacao,notas,url_color,headers)
             
         if predict_ia.status_code == 200:
             st.markdown("***")
             st.markdown(f"<h5 style='text-align:left'>Aqui estão as {int(quantas_imagens)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
             st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
             predict_ia = jsonpickle.decode(predict_ia.text)
+            st.dataframe(predict_ia)
+            classe = predict_ia[0][1]
+            print(classe)
+            predict_ia = predict_ia[1:]
             
             contador = 1
             if int(quantas_imagens) == 6:
