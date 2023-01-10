@@ -39,21 +39,26 @@ def criar_subimagem(predict,contador):
     st.image(pilImage)
 
 def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia):
-    print(predict)
-    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[4].split(" ")[1] + '-' + predict[4].split(" ")[2] + '-' + predict[4].split(" ")[3]}<br></p>""", unsafe_allow_html=True)
+    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Escala de Semelhança: {round(predict[3],4)}</p>""", unsafe_allow_html=True)
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
         my_slot2 = st.empty()
+        my_slot3 = st.empty()
         nota = my_slot1.selectbox("Nota (1 = Ruim, 3 = Aceitável e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
-        botao_avaliacao = my_slot2.button('Avaliar Predição',key=predict[0]+'_button')
-        st.markdown(f""" <img class="image_predict" src="{predict[3]}">""", unsafe_allow_html=True)
+        classe_avaliacao = my_slot2.selectbox("Qual a classe dessa imagem?",['CLASSE','BOTAS','CASUAL ESPORTIVO FEMININO','CASUAL ESPORTIVO MASCULINO',
+                                                                                'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDÁLIAS',
+                                                                                'SANDÁLIAS DE DEDO','SANDÁLIAS MASCULINAS','SAPATILHAS','SAPATOS',
+                                                                                'SCARPINS','SHOPPER','TIRACOLO','TOTE'],key=predict[0]+'_classe')
+        #Criar função para renomear base
+        botao_avaliacao = my_slot3.button('Avaliar Predição',key=predict[0]+'_button')
+        st.markdown(f""" <img class="image_predict" src="{predict[4]}">""", unsafe_allow_html=True)
         
         if botao_avaliacao:
             image_enviada = foto_com_detectada[imagem_referencia-1]
             image_predita = read_image_from_s3("beirario-imagens",predict[0])
             fig = gerar_uniao_de_imagens(image_enviada,image_predita)
             salvar_avaliacoes_pkl(fig,nota)
-            my_slot1.empty(), my_slot2.empty()
+            my_slot1.empty(), my_slot2.empty(), my_slot3.empty()
             st.markdown("<p class='avaliacao'>✅ Avaliação enviada!</p>", unsafe_allow_html=True)
             #envia_avaliacao_para_banco(array_imagem_reduzido,nota)
         
@@ -78,9 +83,17 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
                 contador = contador + 1
                 
 @st.cache
-def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,recomendacao,notas,url_color,headers):
+def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,notas,class_predict,url_color,headers):
     with st.spinner('Carregando Imagens Semelhantes'):
         _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-        lista_envio = [quantas_imagens,img_encoded,recomendacao,notas]
+        lista_envio = [escala_semelhanca,img_encoded,recomendacao,notas,class_predict]
+        predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
+        return predict_ia
+    
+@st.cache
+def predicao_classe(foto_com_detectada,imagem_referencia,url_color,headers):
+    with st.spinner('Carregando Predição da Classe'):
+        _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
+        lista_envio = img_encoded
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia

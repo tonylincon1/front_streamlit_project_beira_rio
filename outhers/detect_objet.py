@@ -64,10 +64,10 @@ def trat_detect_objet_extract (input_image):
     contador = 0
     for box in boxes[0,:quant_boxes]:
         (height, width) = input_image.shape[:2]
-        ymin = int((boxes[0][contador][0]*height)*0.9)
-        xmin = int((boxes[0][contador][1]*width)*0.9)
-        ymax = int((boxes[0][contador][2]*height)*1.1)
-        xmax = int((boxes[0][contador][3]*width)*1.1)
+        ymin = int((boxes[0][contador][0]*height)*0.4)
+        xmin = int((boxes[0][contador][1]*width)*0.4)
+        ymax = int((boxes[0][contador][2]*height)*1.4)
+        xmax = int((boxes[0][contador][3]*width)*1.4)
         img = np.array(input_image[ymin:ymax,xmin:xmax])
 
         #Resize

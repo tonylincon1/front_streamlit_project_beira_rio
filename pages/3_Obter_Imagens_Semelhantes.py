@@ -7,10 +7,11 @@ from PIL import Image
 import streamlit as st
 from Entrar import check_password
 from outhers.detect_objet import *
-from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes
+from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes, predicao_classe
 
 endereco = 'http://127.0.0.1:80'
-url_color = f'{endereco}/predict_recomendation_streamlit'
+url_predict_class = f'{endereco}/predict_class'
+url_predict_similar = f'{endereco}/predict_recomendation_streamlit'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
@@ -75,80 +76,94 @@ if check_password():
                 with col6:
                     criar_subimagem(predict,contador)
                     contador = contador + 1
-        
-        col7,col8,col9 = st.columns(3)
+                    
+        col7,col8 = st.columns(2)
         with col7:
             imagem_referencia = st.selectbox("Qual a imagem que deseja utilizar como referência?",
                                 range(1,quant_detection+1))
         with col8:
-            quantas_imagens = st.selectbox("Quantas imagens de referência deseja?",
-                                (6, 10, 20, 30, 40, 50))
-        with col9:
-            recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
-                                ('Sim', 'Não'))
-            notas = st.selectbox("Imagens semelhantes com avaliações iguais a?",
-                                    (1,2,3,4,5),index=2)
+            predicao_classe_button = st.button('Predição da Classe')
+            @st.cache
+            def botao_predicao_classe():
+                return True
+            predicao_classe_button = botao_predicao_classe()
+            
+        if predicao_classe_button:
                     
-        predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,quantas_imagens,recomendacao,notas,url_color,headers)
-            
-        if predict_ia.status_code == 200:
             st.markdown("***")
-            st.markdown(f"<h5 style='text-align:left'>Aqui estão as {int(quantas_imagens)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
-            st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
-            predict_ia = jsonpickle.decode(predict_ia.text)
-            st.dataframe(predict_ia)
-            classe = predict_ia[0][1]
-            print(classe)
-            predict_ia = predict_ia[1:]
+            predict_class = predicao_classe(foto_com_detectada,imagem_referencia,url_predict_class,headers)
+            predict_class = predict_class.text[1:-1]
             
-            contador = 1
-            if int(quantas_imagens) == 6:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-            elif int(quantas_imagens) == 10:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-            elif int(quantas_imagens) == 20:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
-            elif int(quantas_imagens) == 30:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia)
-            elif int(quantas_imagens) == 40:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia)
-            elif int(quantas_imagens) == 50:
-                plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia)
-                plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia)
+            col9,col10 = st.columns(2)
             
-        else:
-            st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
+            with col9:
+                criar_subimagem(foto_com_detectada[imagem_referencia-1],imagem_referencia)
+            
+            with col10:
+                st.markdown(f"<p class='avaliacao'>A classe predita foi = <strong>{predict_class}</strong></p>", unsafe_allow_html=True)
+                decisao_class = st.selectbox(f"Deseja manter a classificação ({predict_class})?",
+                                        ('Sim', 'Não'))
+                if decisao_class == 'Não':
+                    predict_class = st.selectbox("Qual classe mais representa essa imagem?",
+                                        ('BOTAS','CASUAL ESPORTIVO FEMININO','CASUAL ESPORTIVO MASCULINO',
+                                            'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDÁLIAS',
+                                            'SANDÁLIAS DE DEDO','SANDÁLIAS MASCULINAS','SAPATILHAS','SAPATOS',
+                                            'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
+            
+                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto menor o valor, mais próxima a imagem é da enviada)",
+                                    (0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), index=2)
+                recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
+                                    ('Sim', 'Não'))
+                my_slot1 = st.empty()
+                notas = my_slot1.selectbox("Imagens semelhantes com avaliações iguais a?",
+                                        (1,2,3,4,5),index=2)
+                if recomendacao == 'Não':
+                    notas = 1
+                    my_slot1.empty()
+                
+                predicao_semelhantes = st.button('Predição da Imagens Semelhantes')
+                @st.cache
+                def botao_predicao_imagens_semelhantes():
+                    return True
+                predicao_semelhantes = botao_predicao_imagens_semelhantes()
+                    
+            if predicao_semelhantes:
+                        
+                predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,notas,predict_class,url_predict_similar,headers)
+                    
+                if predict_ia.status_code == 200:
+                    predict_ia = jsonpickle.decode(predict_ia.text)
+                    classe = predict_ia[0][1]
+                    predict_ia = predict_ia[1:]
+                    predict_ia = pd.DataFrame(predict_ia).iloc[pd.DataFrame(predict_ia).iloc[:,0].drop_duplicates().index]
+                    predict_ia = predict_ia.to_numpy()
+                    quantas_imagens = len(predict_ia)
+                    st.markdown("***")
+                    st.markdown(f"<h5 style='text-align:left'>Aqui estão as {len(predict_ia)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
+                    st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
+                    df_predict_ia = pd.DataFrame(predict_ia).rename(columns=({0:"Imagem",
+                                                                              1:"Classe Predita",
+                                                                              2:"Confiança da Classe Predita",
+                                                                              3:"Escala de Semelhança",
+                                                                              4:"Link da Imagem",
+                                                                              5:"Data"}))
+                    st.dataframe(df_predict_ia)
+                    
+                    contador = 1
+                    if int(quantas_imagens) > 0 and int(quantas_imagens) < 50:
+                        plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia)
+                    
+                else:
+                    st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
