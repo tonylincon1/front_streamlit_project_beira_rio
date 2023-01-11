@@ -48,7 +48,7 @@ def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referenci
         my_slot1 = st.empty()
         my_slot2 = st.empty()
         my_slot3 = st.empty()
-        nota = my_slot1.selectbox("Nota (1 = Ruim, 3 = Aceitável e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
+        nota = my_slot1.selectbox("Nota (0 = Ruim, 1 = Boa)",[0,1],key=predict[0]+'_value')
         classe_avaliacao = my_slot2.selectbox("Qual a classe dessa imagem?",['CLASSE','BOTAS','CASUAL ESPORTIVO FEMININO','CASUAL ESPORTIVO MASCULINO',
                                                                                 'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDALIAS',
                                                                                 'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
@@ -89,10 +89,10 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
                 contador = contador + 1
                 
 @st.cache
-def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,notas,class_predict,url_color,headers):
+def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,class_predict,decisao_class,url_color,headers):
     with st.spinner('Carregando Imagens Semelhantes'):
         _, img_encoded = cv2.imencode('.jpg', foto_com_detectada[imagem_referencia-1])
-        lista_envio = [escala_semelhanca,img_encoded,recomendacao,notas,class_predict]
+        lista_envio = [escala_semelhanca,img_encoded,recomendacao,class_predict,decisao_class]
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia
     

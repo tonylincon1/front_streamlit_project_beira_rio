@@ -103,8 +103,8 @@ if check_password():
                 criar_subimagem(foto_com_detectada[imagem_referencia-1],imagem_referencia)
             
             with col10:
-                st.markdown(f"<p class='avaliacao'>A classe predita foi = <strong>{predict_class}</strong></p>", unsafe_allow_html=True)
-                decisao_class = st.selectbox(f"Deseja manter a classificação ({predict_class})?",
+                st.markdown(f"<p class='avaliacao' style='font-size:45px'>A classe predita foi = <strong>{predict_class}</strong></p>", unsafe_allow_html=True)
+                decisao_class = st.selectbox(f"Deseja manter a classificação ({predict_class}) ou fazer uma busca por semelhantes em uma classe especifica?",
                                         ('Sim', 'Não'))
                 if decisao_class == 'Não':
                     predict_class = st.selectbox("Qual classe mais representa essa imagem?",
@@ -113,16 +113,10 @@ if check_password():
                                             'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
             
-                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto menor o valor, mais próxima a imagem é da enviada)",
-                                    (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), index=5)
+                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.95 já temos pouca semelhança)",
+                                    (0.99, 0.98, 0.97, 0.96, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.60), index=4)
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
                                     ('Sim', 'Não'))
-                my_slot1 = st.empty()
-                notas = my_slot1.selectbox("Imagens semelhantes com avaliações iguais a?",
-                                        (1,2,3,4,5),index=2)
-                if recomendacao == 'Não':
-                    notas = 1
-                    my_slot1.empty()
                 
                 predicao_semelhantes = st.button('Predição da Imagens Semelhantes')
                 @st.cache(allow_output_mutation=True)
@@ -133,41 +127,44 @@ if check_password():
                     
             if predicao_semelhantes:
                         
-                predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,notas,predict_class,url_predict_similar,headers)
+                predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,predict_class,decisao_class,url_predict_similar,headers)
                     
                 if predict_ia.status_code == 200:
                     predict_ia = jsonpickle.decode(predict_ia.text)
-                    classe = predict_ia[0][1]
-                    predict_ia = predict_ia[1:]
-                    predict_ia = pd.DataFrame(predict_ia).iloc[pd.DataFrame(predict_ia).iloc[:,0].drop_duplicates().index]
-                    predict_ia = predict_ia.to_numpy()
-                    quantas_imagens = len(predict_ia)
-                    st.markdown("***")
-                    st.markdown(f"<h5 style='text-align:left'>Aqui estão as {len(predict_ia)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
-                    st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
-                    df_predict_ia = pd.DataFrame(predict_ia).rename(columns=({0:"Imagem",
-                                                                              1:"Classe Predita",
-                                                                              2:"Confiança da Classe Predita",
-                                                                              3:"Escala de Semelhança",
-                                                                              4:"Link da Imagem",
-                                                                              5:"Data"}))
-                    st.dataframe(df_predict_ia)
-                    
-                    contador = 1
-                    if int(quantas_imagens) > 0 and int(quantas_imagens) < 50:
-                        plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                        plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
-                    
+                    if len(predict_ia) > 0:
+                        classe = predict_ia[0][1]
+                        predict_ia = predict_ia[1:]
+                        predict_ia = pd.DataFrame(predict_ia).iloc[pd.DataFrame(predict_ia).iloc[:,0].drop_duplicates().index]
+                        predict_ia = predict_ia.to_numpy()
+                        quantas_imagens = len(predict_ia)
+                        
+                        st.markdown("***")
+                        st.markdown(f"<h5 style='text-align:left'>Aqui estão as {len(predict_ia)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
+                        st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
+                        df_predict_ia = pd.DataFrame(predict_ia).rename(columns=({0:"Imagem",
+                                                                                    1:"Classe Predita",
+                                                                                    2:"Confiança da Classe Predita",
+                                                                                    3:"Escala de Semelhança",
+                                                                                    4:"Link da Imagem",
+                                                                                    5:"Data"}))
+                        st.dataframe(df_predict_ia)
+                        
+                        contador = 1
+                        if int(quantas_imagens) > 0 and int(quantas_imagens) < 50:
+                            plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                            plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                    else:
+                        st.markdown(f"<h5 style='text-align:center; color:red'>Não existem imagens semelhantes para a escala de semelhança de {escala_semelhanca} para essa imagem!<br></h5>", unsafe_allow_html=True)
                 else:
                     st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição ou não existem imagens semelhantes para essa imagem. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
