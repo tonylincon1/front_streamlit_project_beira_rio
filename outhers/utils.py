@@ -32,13 +32,17 @@ def gerar_uniao_de_imagens(image_enviada,image_predita):
     im = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
     im = im.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return im
+
+def rename_class(imagem_name, classe_avaliacao,url_change_class,headers):
+    lista_envio = [imagem_name,classe_avaliacao]
+    requests.post(url_change_class, data=jsonpickle.encode(lista_envio), headers=headers)        
     
 def criar_subimagem(predict,contador):
     st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
     pilImage = Image.fromarray((predict).astype(np.uint8))
     st.image(pilImage)
 
-def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia):
+def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers):
     st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Escala de Semelhança: {round(predict[3],4)}</p>""", unsafe_allow_html=True)
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
@@ -46,8 +50,8 @@ def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referenci
         my_slot3 = st.empty()
         nota = my_slot1.selectbox("Nota (1 = Ruim, 3 = Aceitável e 5 = Ótima)",[1,2,3,4,5],key=predict[0]+'_value')
         classe_avaliacao = my_slot2.selectbox("Qual a classe dessa imagem?",['CLASSE','BOTAS','CASUAL ESPORTIVO FEMININO','CASUAL ESPORTIVO MASCULINO',
-                                                                                'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDÁLIAS',
-                                                                                'SANDÁLIAS DE DEDO','SANDÁLIAS MASCULINAS','SAPATILHAS','SAPATOS',
+                                                                                'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDALIAS',
+                                                                                'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                                                                 'SCARPINS','SHOPPER','TIRACOLO','TOTE'],key=predict[0]+'_classe')
         #Criar função para renomear base
         botao_avaliacao = my_slot3.button('Avaliar Predição',key=predict[0]+'_button')
@@ -59,27 +63,29 @@ def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referenci
             fig = gerar_uniao_de_imagens(image_enviada,image_predita)
             salvar_avaliacoes_pkl(fig,nota)
             my_slot1.empty(), my_slot2.empty(), my_slot3.empty()
+            if classe_avaliacao != 'CLASSE':
+                rename_class(predict[0],classe_avaliacao,url_change_class,headers)
             st.markdown("<p class='avaliacao'>✅ Avaliação enviada!</p>", unsafe_allow_html=True)
             #envia_avaliacao_para_banco(array_imagem_reduzido,nota)
         
-def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_referencia):
+def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_referencia,url_change_class,headers):
     col9,col10,col11,col12 = st.columns(4)
     for predict in predict_ia[init:fim]:
         if contador == 1:
             with col9:
-                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia)
+                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
         elif contador == 2:
             with col10:
-                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia)
+                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
         elif contador == 3:
             with col11:
-                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia)
+                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
         elif contador == 4:
             with col12:
-                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia)
+                criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
                 
 @st.cache

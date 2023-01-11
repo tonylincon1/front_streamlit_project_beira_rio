@@ -12,6 +12,7 @@ from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_
 endereco = 'http://127.0.0.1:80'
 url_predict_class = f'{endereco}/predict_class'
 url_predict_similar = f'{endereco}/predict_recomendation_streamlit'
+url_change_class_image = f'{endereco}/change_class_image'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
@@ -32,8 +33,11 @@ if check_password():
     st.markdown("***")
 
     st.markdown("<h3>1) Importe aqui a imagem dos seus calçados 👞<br></h3>", unsafe_allow_html=True)
-
+    
     foto_predict = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg', 'jpeg','jfif'], accept_multiple_files=False)
+    
+    
+    #.forget(foto_predict)
 
     if foto_predict:
         st.markdown(f"<h5 style='text-align:center'>Você importou a imagem: {foto_predict.name}<br></h5>", unsafe_allow_html=True)
@@ -83,11 +87,10 @@ if check_password():
                                 range(1,quant_detection+1))
         with col8:
             predicao_classe_button = st.button('Predição da Classe')
-            @st.cache
+            @st.cache()
             def botao_predicao_classe():
                 return True
             predicao_classe_button = botao_predicao_classe()
-            
         if predicao_classe_button:
                     
             st.markdown("***")
@@ -106,12 +109,12 @@ if check_password():
                 if decisao_class == 'Não':
                     predict_class = st.selectbox("Qual classe mais representa essa imagem?",
                                         ('BOTAS','CASUAL ESPORTIVO FEMININO','CASUAL ESPORTIVO MASCULINO',
-                                            'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDÁLIAS',
-                                            'SANDÁLIAS DE DEDO','SANDÁLIAS MASCULINAS','SAPATILHAS','SAPATOS',
+                                            'ESPORTIVO','FLATS','FUTEBOL','MOCASSIM','MOCHILA','RN','SANDALIAS',
+                                            'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
             
                 escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto menor o valor, mais próxima a imagem é da enviada)",
-                                    (0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), index=2)
+                                    (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), index=5)
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
                                     ('Sim', 'Não'))
                 my_slot1 = st.empty()
@@ -122,9 +125,10 @@ if check_password():
                     my_slot1.empty()
                 
                 predicao_semelhantes = st.button('Predição da Imagens Semelhantes')
-                @st.cache
+                @st.cache(allow_output_mutation=True)
                 def botao_predicao_imagens_semelhantes():
-                    return True
+                    if predicao_classe_button:
+                        return True
                 predicao_semelhantes = botao_predicao_imagens_semelhantes()
                     
             if predicao_semelhantes:
@@ -151,19 +155,19 @@ if check_password():
                     
                     contador = 1
                     if int(quantas_imagens) > 0 and int(quantas_imagens) < 50:
-                        plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia)
-                        plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia)
+                        plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,4,8,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,8,12,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,12,16,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,16,20,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,20,24,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,24,28,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,28,32,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,32,36,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,36,40,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,40,44,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,44,48,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
+                        plot_subimagem(predict_ia,48,50,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)
                     
                 else:
-                    st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
+                    st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição ou não existem imagens semelhantes para essa imagem. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
