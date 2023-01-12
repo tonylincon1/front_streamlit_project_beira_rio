@@ -146,7 +146,8 @@ if check_password():
                                                                                     2:"Confiança da Classe Predita",
                                                                                     3:"Escala de Semelhança",
                                                                                     4:"Link da Imagem",
-                                                                                    5:"Data"}))
+                                                                                    5:"Data",
+                                                                                    6:"Predição Avaliação"}))
                         st.dataframe(df_predict_ia)
                         
                         contador = 1

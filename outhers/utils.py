@@ -38,12 +38,12 @@ def rename_class(imagem_name, classe_avaliacao,url_change_class,headers):
     requests.post(url_change_class, data=jsonpickle.encode(lista_envio), headers=headers)        
     
 def criar_subimagem(predict,contador):
-    st.markdown(f"<h6 style='text-align:center'>Essa é a detecão: {contador} <br></h6>", unsafe_allow_html=True)
+    st.markdown(f"<h6 style='text-align:center'>Essa é a detecção: {contador} <br></h6>", unsafe_allow_html=True)
     pilImage = Image.fromarray((predict).astype(np.uint8))
     st.image(pilImage)
 
 def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers):
-    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Escala de Semelhança: {round(predict[3],4)}</p>""", unsafe_allow_html=True)
+    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Escala de Semelhança: {round(predict[3],4)}<br>Predição Avaliação: {predict[6]}</p>""", unsafe_allow_html=True)
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
         my_slot2 = st.empty()
