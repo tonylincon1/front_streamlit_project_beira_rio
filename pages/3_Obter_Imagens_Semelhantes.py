@@ -1,9 +1,6 @@
-import cv2
-import time
 import jsonpickle
 import numpy as np
 import pandas as pd
-from PIL import Image
 import streamlit as st
 from Entrar import check_password
 from outhers.detect_objet import *
@@ -11,7 +8,7 @@ from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_
 
 endereco = 'http://127.0.0.1:80'
 url_predict_class = f'{endereco}/predict_class'
-url_predict_similar = f'{endereco}/predict_recomendation_streamlit'
+url_predict_similar = f'{endereco}/predict_recomendation'
 url_change_class_image = f'{endereco}/change_class_image'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
@@ -41,12 +38,15 @@ if check_password():
 
     if foto_predict:
         st.markdown(f"<h5 style='text-align:center'>Você importou a imagem: {foto_predict.name}<br></h5>", unsafe_allow_html=True)
-        st.image(foto_predict, width=500)
+        st.image(foto_predict, width=600)
         foto_predict = np.array(load_image(foto_predict))
+        remove_background_image = st.selectbox("Deseja remover o background da imagem?",
+                                                ('Sim','Não'),index=1)
+        st.markdown("***")
         
         #Retorno detecção
         with st.spinner('Carregando Detecções'):
-            foto_com_detectada = trat_detect_objet_extract(foto_predict)
+            foto_com_detectada = trat_detect_objet_extract(foto_predict,remove_background_image)
         quant_detection = len(foto_com_detectada)
         st.markdown(f"<h5 style='text-align:left'>Foram detectados {quant_detection} objetos, Esses foram os objetos detectados: <br></h5>", unsafe_allow_html=True)
         
@@ -88,9 +88,9 @@ if check_password():
         with col8:
             predicao_classe_button = st.button('Predição da Classe')
             @st.cache()
-            def botao_predicao_classe():
+            def botao_predicao_classe_save():
                 return True
-            predicao_classe_button = botao_predicao_classe()
+            predicao_classe_button = botao_predicao_classe_save()
         if predicao_classe_button:
                     
             st.markdown("***")
@@ -113,10 +113,10 @@ if check_password():
                                             'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
             
-                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.95 já temos pouca semelhança)",
-                                    (0.99, 0.98, 0.97, 0.96, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.60), index=4)
+                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.90 já temos pouca semelhança)",
+                                    (0.99, 0.98, 0.97, 0.96, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.60), index=5)
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
-                                    ('Sim', 'Não'))
+                                    ('Sim', 'Não'), index=0)
                 
                 predicao_semelhantes = st.button('Predição da Imagens Semelhantes')
                 @st.cache(allow_output_mutation=True)

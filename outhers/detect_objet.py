@@ -2,6 +2,7 @@ import tensorflow as tf
 import os
 import cv2
 import numpy as np
+from outhers.utils import remove_background
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -30,7 +31,7 @@ with detection_graph.as_default():
         tf.import_graph_def(od_graph_def, name='')
     sess = tf.compat.v1.Session(graph=detection_graph)
     
-def trat_detect_objet_extract (input_image):
+def trat_detect_objet_extract (input_image,remove_background_image):
 
     # Define input and output tensors (i.e. data) for the object detection classifier
     # Input tensor is the image
@@ -51,7 +52,10 @@ def trat_detect_objet_extract (input_image):
     # Load image using OpenCV and
     # expand image dimensions to have shape: [1, None, None, 3]
     # i.e. a single-column array, where each item in the column has the pixel RGB value
-
+    if remove_background_image == 'Sim':
+        input_image_remove_background = remove_background(input_image)
+    if remove_background_image == 'Não':
+        input_image_remove_background = input_image
     #input_image=cv2.resize(input_image,(500,500))
     image_expanded = np.expand_dims(input_image, axis=0)
 
@@ -63,17 +67,16 @@ def trat_detect_objet_extract (input_image):
     list_images = []
     contador = 0
     for box in boxes[0,:quant_boxes]:
-        (height, width) = input_image.shape[:2]
+        (height, width) = input_image_remove_background.shape[:2]
         ymin = int((boxes[0][contador][0]*height)*0.4)
         xmin = int((boxes[0][contador][1]*width)*0.4)
         ymax = int((boxes[0][contador][2]*height)*1.4)
         xmax = int((boxes[0][contador][3]*width)*1.4)
-        img = np.array(input_image[ymin:ymax,xmin:xmax])
-
+        img = np.array(input_image_remove_background[ymin:ymax,xmin:xmax])
         #Resize
         img=cv2.resize(img,(224,224))
         img=img.astype('float32')
-        img=img.reshape(224,224,3)
+        #img=img.reshape(224,224,3)
         list_images.append(img)
         contador = contador + 1
 
