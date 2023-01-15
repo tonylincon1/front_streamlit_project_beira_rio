@@ -5,11 +5,10 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import streamlit as st
-from Entrar import check_password
 from outhers.detect_objet import *
-from outhers.utils import gerar_uniao_de_imagens_horizontal, criar_nomes_imagens, remove_background
+from outhers.utils import gerar_uniao_de_imagens_horizontal, criar_nomes_imagens, remove_background, check_password
 
-endereco = 'http://3412-35-197-157-27.ngrok.io'
+endereco = 'http://e34d-34-143-134-166.ngrok.io'
 url_create_new_images = f'{endereco}/create_new_images'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
@@ -28,10 +27,31 @@ st.sidebar.image("files/images/logo.png", use_column_width=True)
 
 if check_password():
     st.markdown("""<h1 style="text-align:center">Criador de Calçados</h1>""", unsafe_allow_html=True)
+    st.markdown("""<h4 style="text-align:justify;color:red;">*Essa aba ficará funcional até o dia 16/02/2023. Para mais informações por favor entrar em contato com administrador.</h4>""", unsafe_allow_html=True)
     st.markdown("***")
     calcado_1_pre_tratado = False
     calcado_2_pre_tratado = False
+    st.markdown("""<p style="text-align:justify">Essa aba foi criada para  criado um pipeline de GAN (rede geradora adversária) com o objetivo de gerar novas imagens de calçados a partir de duas imagens de calçados de entrada. Este processo foi aplicado com sucesso em projetos passados e tem sido usado como referência para projetos futuros.</p>""", unsafe_allow_html=True)
+    st.markdown("""<p style="text-align:justify">Algumas demonstrações do potencial do modelo de criação de novos calçados:</p>""", unsafe_allow_html=True)
+    
+    coldemo1,coldemo2 = st.columns(2)
+    with coldemo1:
+        st.markdown("""<p style="text-align:center"><strong>Combinando Características Duas Botas e Gerando Novos Calçados</strong></p>""", unsafe_allow_html=True)
+        image = Image.open('files/images/Combinação de Calçados 1.png')
+        st.image(image)
+        st.markdown("""<p style="text-align:center"><strong>Combinando Características Dois Tênis Esportivos e Gerando Novos Calçados</strong></p>""", unsafe_allow_html=True)
+        image = Image.open('files/images/Combinação de Calçados 2.png')
+        st.image(image)
+    with coldemo2:
+        st.markdown("""<p style="text-align:center"><strong>Combinando Características Bota com Scarpin e Gerando Novos Calçados</strong></p>""", unsafe_allow_html=True)
+        image = Image.open('files/images/Combinação de Calçados 3.png')
+        st.image(image)
+        st.markdown("""<p style="text-align:center"><strong>Combinando Características Dois Scarpins e Gerando Novos Calçados</strong></p>""", unsafe_allow_html=True)
+        image = Image.open('files/images/Combinação de Calçados 4.png')
+        st.image(image)
 
+    st.markdown("***")
+    
     col1,col2 = st.columns(2)
     with col1:
         st.markdown("<h3>1) Importe o primeiro calçado 👞<br></h3>", unsafe_allow_html=True)

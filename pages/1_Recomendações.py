@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
-from Entrar import check_password
+from outhers.utils import check_password
 
 st.set_page_config(
     page_title="Recomendações",

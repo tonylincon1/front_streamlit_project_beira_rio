@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import base64
-from Entrar import check_password
+from outhers.utils import check_password
 
 st.set_page_config(
     page_title="Mais Informações",
