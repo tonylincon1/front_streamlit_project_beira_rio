@@ -8,7 +8,7 @@ import streamlit as st
 from outhers.detect_objet import *
 from outhers.utils import gerar_uniao_de_imagens_horizontal, criar_nomes_imagens, remove_background, check_password
 
-endereco = 'http://e34d-34-143-134-166.ngrok.io'
+endereco = 'http://a383-34-143-197-87.ngrok.io'
 url_create_new_images = f'{endereco}/create_new_images'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
