@@ -157,7 +157,7 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
                
 @st.cache
 def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,class_predict,decisao_class,url_color,headers):
-    with st.spinner('Carregando Imagens Semelhantes (Esse processo pode demorar de 4 a 10 minutos)'):
+    with st.spinner('Carregando Imagens Semelhantes (Esse processo pode demorar)'):
         image = foto_com_detectada[imagem_referencia-1]
         _, img_encoded = cv2.imencode('.jpg', image)
         lista_envio = [escala_semelhanca,img_encoded,recomendacao,class_predict,decisao_class]

@@ -5,7 +5,7 @@ import streamlit as st
 from outhers.detect_objet import *
 from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes, predicao_classe, check_password
 
-endereco = 'http://54.83.166.236'
+endereco = 'http://127.0.0.1:80'
 url_predict_class = f'{endereco}/predict_class'
 url_predict_similar = f'{endereco}/predict_recomendation'
 url_change_class_image = f'{endereco}/change_class_image'
@@ -46,7 +46,7 @@ if check_password():
         st.image(foto_predict, width=600)
         foto_predict = np.array(load_image(foto_predict))
         remove_background_image = st.selectbox("Deseja remover o background da imagem?",
-                                                ('Sim','Não'),index=1)
+                                                ('Sim','Não'),index=0)
         st.markdown("***")
         
         #Retorno detecção
@@ -111,8 +111,7 @@ if check_password():
                                             'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
             
-                escala_semelhanca = st.selectbox("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.90 já temos pouca semelhança)",
-                                    (0.99, 0.98, 0.97, 0.96, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.60), index=5)
+                escala_semelhanca = st.slider("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.88 já temos pouca semelhança)", 0.5, 0.99, value=0.88)
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
                                     ('Sim', 'Não'), index=0)
                 
@@ -125,7 +124,7 @@ if check_password():
                     predict_ia = jsonpickle.decode(predict_ia.text)
                     if len(predict_ia) > 0:
                         classe = predict_ia[0][1]
-                        predict_ia = predict_ia[1:]
+                        predict_ia = predict_ia
                         predict_ia = pd.DataFrame(predict_ia).iloc[pd.DataFrame(predict_ia).iloc[:,0].drop_duplicates().index]
                         predict_ia = predict_ia.to_numpy()
                         quantas_imagens = len(predict_ia)
