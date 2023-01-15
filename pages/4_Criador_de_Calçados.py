@@ -46,7 +46,7 @@ if check_password():
             calcado_1_pre_tratado = True
     
     with col2:
-        st.markdown("<h3>2) Importe o primeiro calçado 👞<br></h3>", unsafe_allow_html=True)
+        st.markdown("<h3>2) Importe o segundo calçado 👞<br></h3>", unsafe_allow_html=True)
         calcado_2 = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg', 'jpeg','jfif'], key='calcado_2', accept_multiple_files=False)
         if calcado_2:
             st.markdown(f"<h5 style='text-align:center'>Você importou a imagem: {calcado_2.name}<br></h5>", unsafe_allow_html=True)

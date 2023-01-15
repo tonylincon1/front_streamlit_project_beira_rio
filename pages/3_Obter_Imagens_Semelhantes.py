@@ -25,16 +25,22 @@ with open('files/css/styles.css') as f:
     
 st.sidebar.image("files/images/logo.png", use_column_width=True)
 
+if 'botao_1' not in st.session_state:
+    st.session_state['botao_1'] = False
+if 'botao_2' not in st.session_state:
+    st.session_state['botao_2'] = False
+    
+def write_variable():
+    st.session_state['botao_1'] = False
+    st.session_state['botao_2'] = False
+
 if check_password():
     st.markdown("""<h1 style="text-align:center">Obter Imagens Semelhantes</h1>""", unsafe_allow_html=True)
     st.markdown("***")
 
     st.markdown("<h3>1) Importe aqui a imagem dos seus calçados 👞<br></h3>", unsafe_allow_html=True)
     
-    foto_predict = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg', 'jpeg','jfif'], accept_multiple_files=False)
-    
-    
-    #.forget(foto_predict)
+    foto_predict = st.file_uploader("Selecione a foto que deseja", type=['png', 'jpg', 'jpeg','jfif'], accept_multiple_files=False, on_change=write_variable)
 
     if foto_predict:
         st.markdown(f"<h5 style='text-align:center'>Você importou a imagem: {foto_predict.name}<br></h5>", unsafe_allow_html=True)
@@ -81,18 +87,11 @@ if check_password():
                     criar_subimagem(predict,contador)
                     contador = contador + 1
                     
-        col7,col8 = st.columns(2)
-        with col7:
-            imagem_referencia = st.selectbox("Qual a imagem que deseja utilizar como referência?",
-                                range(1,quant_detection+1))
-        with col8:
-            predicao_classe_button = st.button('Predição da Classe')
-            @st.cache()
-            def botao_predicao_classe_save():
-                return True
-            predicao_classe_button = botao_predicao_classe_save()
-        if predicao_classe_button:
-                    
+        imagem_referencia = st.selectbox("Qual a imagem que deseja utilizar como referência?",
+                            range(1,quant_detection+1))
+        if st.button("Predição da Classe"):
+            st.session_state.botao_1 = True
+        if st.session_state.botao_1:
             st.markdown("***")
             predict_class = predicao_classe(foto_com_detectada,imagem_referencia,url_predict_class,headers)
             predict_class = predict_class.text[1:-1]
@@ -118,17 +117,11 @@ if check_password():
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
                                     ('Sim', 'Não'), index=0)
                 
-                predicao_semelhantes = st.button('Predição da Imagens Semelhantes')
-                @st.cache(allow_output_mutation=True)
-                def botao_predicao_imagens_semelhantes():
-                    if predicao_classe_button:
-                        return True
-                predicao_semelhantes = botao_predicao_imagens_semelhantes()
+                if st.button('Predição da Imagens Semelhantes'):
+                    st.session_state.botao_2 = True
                     
-            if predicao_semelhantes:
-                        
+            if st.session_state.botao_2:
                 predict_ia = predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,predict_class,decisao_class,url_predict_similar,headers)
-                    
                 if predict_ia.status_code == 200:
                     predict_ia = jsonpickle.decode(predict_ia.text)
                     if len(predict_ia) > 0:
@@ -140,16 +133,13 @@ if check_password():
                         
                         st.markdown("***")
                         st.markdown(f"<h5 style='text-align:left'>Aqui estão as {len(predict_ia)} imagens semelhantes: <br></h5>", unsafe_allow_html=True)
-                        st.markdown(f"""<p class="observacao_predicao" style='text-align:left;'>*Atenção: Caso as predição tenham muitas imagens que não são semelhantes a imagem enviada, isso significa que não temos imagens parecidas no banco de dados que foi utilizado para treinar a inteligência artifical e as imagens que foram devolvidas são imagens "mais próximas" da atual.<br></p>""", unsafe_allow_html=True)
                         df_predict_ia = pd.DataFrame(predict_ia).rename(columns=({0:"Imagem",
                                                                                     1:"Classe Predita",
                                                                                     2:"Confiança da Classe Predita",
                                                                                     3:"Escala de Semelhança",
                                                                                     4:"Link da Imagem",
-                                                                                    5:"Data",
-                                                                                    6:"Predição Avaliação"}))
+                                                                                    5:"Data"}))
                         st.dataframe(df_predict_ia)
-                        
                         contador = 1
                         if int(quantas_imagens) > 0 and int(quantas_imagens) < 50:
                             plot_subimagem(predict_ia,0,4,contador,foto_com_detectada,imagem_referencia,url_change_class_image,headers)

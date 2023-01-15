@@ -126,7 +126,7 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
             with col12:
                 criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
-                
+               
 @st.cache
 def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,class_predict,decisao_class,url_color,headers):
     with st.spinner('Carregando Imagens Semelhantes (Esse processo pode demorar de 4 a 10 minutos)'):
@@ -156,7 +156,6 @@ def predicao_classe(foto_com_detectada,imagem_referencia,url_color,headers):
         lista_envio = img_encoded
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia
-    #ImmutableMultiDict([('image_predict', <FileStorage: '2fe5c493-333f-4725-81e0-7871abe1e95b.jpg' ('image/jpeg')>)])
     
 @st.cache
 def criar_nomes_imagens(foto_com_detectada,quant_imagens,url_color,headers):
