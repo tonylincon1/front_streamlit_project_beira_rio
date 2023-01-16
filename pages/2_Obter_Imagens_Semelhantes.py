@@ -5,7 +5,7 @@ import streamlit as st
 from outhers.detect_objet import *
 from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes, predicao_classe, check_password
 
-endereco = 'http://54.83.166.236'
+endereco = "http://54.83.166.236"
 url_predict_class = f'{endereco}/predict_class'
 url_predict_similar = f'{endereco}/predict_recomendation'
 url_change_class_image = f'{endereco}/change_class_image'
