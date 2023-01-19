@@ -111,7 +111,7 @@ if check_password():
                                             'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE'))
             
-                escala_semelhanca = st.slider("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.88 já temos pouca semelhança)", 0.5, 0.99, value=0.88)
+                escala_semelhanca = st.slider("Escala de semelhança? (Quanto maior o valor, mais próxima a imagem é da enviada, abaixo de 0.9 já temos pouca semelhança)", 0.5, 0.99, value=0.9)
                 recomendacao = st.selectbox("Deseja considerar o sistema de recomendação?",
                                     ('Sim', 'Não'), index=0)
                 

@@ -92,7 +92,7 @@ def criar_subimagem(predict,contador):
     st.image(pilImage)
 
 def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers):
-    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Escala de Semelhança: {round(predict[3],4)}</p>""", unsafe_allow_html=True)
+    st.markdown(f"""<p style='text-align:center'>Imagem: {predict[0]}<br>Data: {predict[5].split(" ")[1] + '-' + predict[5].split(" ")[2] + '-' + predict[5].split(" ")[3]}<br>Classe Predita: {predict[1]}</p><br>Escala de Semelhança: {round(predict[3],4)}</p>""", unsafe_allow_html=True)
     with st.spinner('Enviando Avaliação'):
         my_slot1 = st.empty()
         my_slot2 = st.empty()
