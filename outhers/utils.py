@@ -77,6 +77,8 @@ def gerar_uniao_de_imagens(image_enviada,image_predita):
 
 #Detecção das Imagens Semelhantes
 def gerar_uniao_de_imagens_horizontal(image_enviada,image_predita):
+    image_enviada=cv2.resize(image_enviada,(500,400))
+    image_predita=cv2.resize(image_predita,(500,400))
     im = np.vstack((image_enviada, image_predita))
     return im
 
