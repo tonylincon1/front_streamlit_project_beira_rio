@@ -32,6 +32,7 @@ if 'botao_2' not in st.session_state:
 def write_variable():
     st.session_state['botao_1'] = False
     st.session_state['botao_2'] = False
+    st.experimental_memo.clear()
 
 if check_password():
     st.markdown("""<h1 style="text-align:center">Obter Imagens Semelhantes</h1>""", unsafe_allow_html=True)

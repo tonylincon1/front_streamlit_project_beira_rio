@@ -3,8 +3,42 @@ import boto3
 import numpy as np
 import pandas as pd
 from PIL import Image
+import mysql.connector
 import streamlit as st
 from pickle import load
+from mysql.connector import errorcode
+
+config = {
+  'host':'chicodelivery.com',
+  'user':'chicod46_root',
+  'password':'poss-supt-kirs-op',
+  'database':'chicod46_imagens_beirario',
+  'client_flags': [mysql.connector.ClientFlag.SSL],
+}
+        
+def select_table(tabela):
+    try:
+        conn = mysql.connector.connect(**config)
+        print("Connection established")
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with the user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        cursor = conn.cursor()
+        
+    cursor.execute(f"""
+    SELECT 
+    *
+    FROM 
+    {tabela};""")
+
+    rows = cursor.fetchall()
+    rows = pd.DataFrame(rows)
+    return rows
 
 def read_image_from_s3(bucket, key):
     """Load image file from s3.

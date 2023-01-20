@@ -119,7 +119,7 @@ def criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referenci
                 'SCARPINS',
                 'SHOPPER',
                 'TIRACOLO',
-                'TOTE',
+                'TOTE'
             ],
             key=f'{predict[0]}+_classe',
             )
@@ -156,8 +156,52 @@ def plot_subimagem(predict_ia,init,fim,contador,foto_com_detectada,imagem_refere
             with col12:
                 criar_subimagem_predict(predict,contador,foto_com_detectada,imagem_referencia,url_change_class,headers)
                 contador = contador + 1
+                
+def plot_image_class(linhas,url_change_class,headers):
+    col1,col2,col3,col4,col5,col6,col7,col8 = st.columns(8)
+    for idx, col in enumerate([col1,col2,col3,col4,col5,col6,col7,col8]):
+        try:
+            with col:
+                my_slot1 = st.empty()
+                my_slot2 = st.empty()
+                my_slot3 = st.empty()
+                my_slot4 = st.empty()
+                my_slot1.markdown(f"""<p style='text-align:center'>Imagem: {linhas.nome.iloc[idx]}<br>Classe Predita: {linhas.clases_1.iloc[idx]}""", unsafe_allow_html=True)
+                classe_avaliacao = my_slot2.selectbox("Qual a classe dessa imagem?",[
+                    'CLASSE',
+                    'BOTAS',
+                    'CASUAL ESPORTIVO FEMININO',
+                    'CASUAL ESPORTIVO MASCULINO',
+                    'ESPORTIVO',
+                    'FLATS',
+                    'FUTEBOL',
+                    'MOCASSIM',
+                    'MOCHILA',
+                    'RN',
+                    'SANDALIAS',
+                    'SANDALIAS DE DEDO',
+                    'SANDALIAS MASCULINAS',
+                    'SAPATILHAS',
+                    'SAPATOS',
+                    'SCARPINS',
+                    'SHOPPER',
+                    'TIRACOLO',
+                    'TOTE',
+                    'NÃO É CALÇADO'
+                ],
+                key=f'{linhas.nome.iloc[idx]}+_classe',
+                )
+                alterar_classe = my_slot3.button('Alterar Classe',key=linhas.nome.iloc[idx]+'_button')
+                my_slot4.markdown(f""" <img class="image_predict" src="{linhas.link.iloc[idx]}">""", unsafe_allow_html=True)
+                
+                if alterar_classe:
+                    rename_class(linhas.nome.iloc[idx],classe_avaliacao,url_change_class,headers)
+                    my_slot1.empty(), my_slot2.empty(), my_slot3.empty(), my_slot4.empty()
+                    st.markdown("<p class='avaliacao'>✅ Classe alterada!<br>Você conseguirá ver essa imagem na nova classe após atualizar a página!</p>", unsafe_allow_html=True)
+        except:
+            None
                
-@st.cache
+@st.experimental_memo
 def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_semelhanca,recomendacao,class_predict,decisao_class,url_color,headers):
     with st.spinner('Carregando Imagens Semelhantes (Esse processo pode demorar)'):
         image = foto_com_detectada[imagem_referencia-1]
@@ -166,7 +210,7 @@ def predicao_imagens_semelhantes(foto_com_detectada,imagem_referencia,escala_sem
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia
     
-@st.cache
+@st.experimental_memo
 def predicao_classe(foto_com_detectada,imagem_referencia,url_color,headers):
     with st.spinner('Carregando Predição da Classe'):
         """
@@ -187,7 +231,7 @@ def predicao_classe(foto_com_detectada,imagem_referencia,url_color,headers):
         predict_ia = requests.post(url_color, data=jsonpickle.encode(lista_envio), headers=headers)
         return predict_ia
     
-@st.cache
+@st.experimental_memo
 def criar_nomes_imagens(foto_com_detectada,quant_imagens,url_color,headers):
     with st.spinner('Carregando Predição da Classe (Esse processo pode demorar de 4 a 10 minutos)'):
         _, img_encoded = cv2.imencode('.jpg', foto_com_detectada)
