@@ -54,6 +54,7 @@ MarkupSafe==2.1.1
 matplotlib==3.6.2
 mpmath==1.2.1
 multidict==6.0.4
+mysql-connector-python==8.0.32
 networkx==3.0
 numba==0.56.4
 numpy==1.23.5
