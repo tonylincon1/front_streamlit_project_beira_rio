@@ -1,5 +1,6 @@
-import streamlit as st
 from PIL import Image
+import streamlit as st
+import streamlit_analytics
 from outhers.utils import check_password
 
 st.set_page_config(
@@ -11,7 +12,9 @@ with open('files/css/styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
 st.sidebar.image("files/images/logo.png", use_column_width=True)
-    
+
+streamlit_analytics.start_tracking()
+
 if check_password():
     
     st.markdown("""<h1 style="text-align:center">Projeto Beira Rio <br> IA para Reconhecimento de Imagens</h1>""", unsafe_allow_html=True)
@@ -89,3 +92,5 @@ if check_password():
     image = Image.open('files/images/parceria.png')
     st.image(image)
     st.markdown("")
+    
+streamlit_analytics.stop_tracking()

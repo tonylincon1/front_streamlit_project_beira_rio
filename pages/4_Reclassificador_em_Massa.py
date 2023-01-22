@@ -1,10 +1,5 @@
-import cv2
-import time
-import jsonpickle
-import numpy as np
-import pandas as pd
-from PIL import Image
 import streamlit as st
+import streamlit_analytics
 from outhers.utils import check_password, plot_image_class
 from outhers.conect_data import select_table
 
@@ -33,6 +28,8 @@ if 'data_class' not in st.session_state:
 def write_variable():
     st.session_state.reclassificacao_1 = False
     st.session_state['data_class'] = None
+
+streamlit_analytics.start_tracking()
 
 if check_password():
     st.markdown("""<h1 style="text-align:center">Reclassificador em Massa</h1>""", unsafe_allow_html=True)
@@ -81,4 +78,4 @@ if check_password():
                 linhas = data.iloc[contador:contador+8]
                 plot_image_class(linhas,url_change_class_image,headers)
                 contador += 8
-            
+streamlit_analytics.stop_tracking()            

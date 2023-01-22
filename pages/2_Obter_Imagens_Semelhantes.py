@@ -2,6 +2,7 @@ import jsonpickle
 import numpy as np
 import pandas as pd
 import streamlit as st
+import streamlit_analytics
 from outhers.detect_objet import *
 from outhers.utils import load_image, criar_subimagem, plot_subimagem, predicao_imagens_semelhantes, predicao_classe, check_password
 
@@ -33,6 +34,8 @@ def write_variable():
     st.session_state['botao_1'] = False
     st.session_state['botao_2'] = False
     st.experimental_memo.clear()
+    
+streamlit_analytics.start_tracking()
 
 if check_password():
     st.markdown("""<h1 style="text-align:center">Obter Imagens Semelhantes</h1>""", unsafe_allow_html=True)
@@ -158,3 +161,4 @@ if check_password():
                         st.markdown(f"<h5 style='text-align:center; color:red'>Não existem imagens semelhantes para a escala de semelhança de {escala_semelhanca} para essa imagem!<br></h5>", unsafe_allow_html=True)
                 else:
                     st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na predição ou não existem imagens semelhantes para essa imagem. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
+streamlit_analytics.stop_tracking()

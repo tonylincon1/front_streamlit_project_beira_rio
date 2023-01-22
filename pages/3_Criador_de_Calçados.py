@@ -1,10 +1,7 @@
-import cv2
-import time
 import jsonpickle
-import numpy as np
-import pandas as pd
 from PIL import Image
 import streamlit as st
+import streamlit_analytics
 from outhers.detect_objet import *
 from outhers.utils import gerar_uniao_de_imagens_horizontal, criar_nomes_imagens, remove_background, check_password
 
@@ -24,6 +21,8 @@ with open('files/css/styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
 st.sidebar.image("files/images/logo.png", use_column_width=True)
+
+streamlit_analytics.start_tracking()
 
 if check_password():
     st.markdown("""<h1 style="text-align:center">Criador de Calçados</h1>""", unsafe_allow_html=True)
@@ -126,3 +125,4 @@ if check_password():
                         st.image(novos_calcados[3])
             else:
                     st.markdown(f"<h5 style='text-align:center; color:red'>Houve algum problema na criação de novos calçados. Por favor contacte o administrador!<br></h5>", unsafe_allow_html=True)
+streamlit_analytics.stop_tracking()
