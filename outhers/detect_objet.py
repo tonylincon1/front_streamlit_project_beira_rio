@@ -52,34 +52,38 @@ def trat_detect_objet_extract (input_image,remove_background_image):
     # Load image using OpenCV and
     # expand image dimensions to have shape: [1, None, None, 3]
     # i.e. a single-column array, where each item in the column has the pixel RGB value
-    if remove_background_image == 'Sim':
-        input_image_remove_background = remove_background(input_image)
-    if remove_background_image == 'Não':
-        input_image_remove_background = input_image
-    #input_image=cv2.resize(input_image,(500,500))
-    image_expanded = np.expand_dims(input_image, axis=0)
+    if input_image.shape[-1] < 4:
+        if remove_background_image == 'Sim':
+            input_image_remove_background = remove_background(input_image)
+        if remove_background_image == 'Não':
+            input_image_remove_background = input_image
+        #input_image=cv2.resize(input_image,(500,500))
+        image_expanded = np.expand_dims(input_image, axis=0)
 
-    # Perform the actual detection by running the model with the image as input
-    (boxes, scores, classes, num) = sess.run([detection_boxes, detection_scores, detection_classes, num_detections],feed_dict={image_tensor: image_expanded})
+        # Perform the actual detection by running the model with the image as input
+        (boxes, scores, classes, num) = sess.run([detection_boxes, detection_scores, detection_classes, num_detections],feed_dict={image_tensor: image_expanded})
 
-    quant_boxes = len(scores[scores > 0.4])
-    
-    list_images = []
-    contador = 0
-    for box in boxes[0,:quant_boxes]:
-        (height, width) = input_image_remove_background.shape[:2]
-        ymin = int((boxes[0][contador][0]*height)*0.4)
-        xmin = int((boxes[0][contador][1]*width)*0.4)
-        ymax = int((boxes[0][contador][2]*height)*1.4)
-        xmax = int((boxes[0][contador][3]*width)*1.4)
-        img = np.array(input_image_remove_background[ymin:ymax,xmin:xmax])
-        #Resize
-        img=cv2.resize(img,(224,224))
-        img=img.astype('float32')
-        #img=img.reshape(224,224,3)
-        list_images.append(img)
-        contador = contador + 1
+        quant_boxes = len(scores[scores > 0.4])
+        
+        list_images = []
+        contador = 0
+        for box in boxes[0,:quant_boxes]:
+            (height, width) = input_image_remove_background.shape[:2]
+            ymin = int((boxes[0][contador][0]*height)*0.4)
+            xmin = int((boxes[0][contador][1]*width)*0.4)
+            ymax = int((boxes[0][contador][2]*height)*1.4)
+            xmax = int((boxes[0][contador][3]*width)*1.4)
+            img = np.array(input_image_remove_background[ymin:ymax,xmin:xmax])
+            #Resize
+            img=cv2.resize(img,(224,224))
+            img=img.astype('float32')
+            #img=img.reshape(224,224,3)
+            list_images.append(img)
+            contador = contador + 1
 
-    return list_images
-    
+        return list_images
+    else:
+        img=cv2.resize(input_image,(224,224))
+        list_images = [img]
+        return list_images
     
