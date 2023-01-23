@@ -3,7 +3,7 @@ import streamlit_analytics
 from outhers.utils import check_password, plot_image_class
 from outhers.conect_data import select_table
 
-endereco = 'http://54.83.166.236'
+endereco = 'http://54.83.166.236' #http://127.0.0.1:80
 url_change_class_image = f'{endereco}/change_class_image'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
@@ -41,7 +41,7 @@ if check_password():
                                             'SANDALIAS DE DEDO','SANDALIAS MASCULINAS','SAPATILHAS','SAPATOS',
                                             'SCARPINS','SHOPPER','TIRACOLO','TOTE', 'NÃO É CALÇADO'),on_change=write_variable)
 
-    if st.button('Imagens Classificadas'):
+    if st.button('Imagens Classificadas', on_click=write_variable):
         st.session_state.reclassificacao_1 = True
         data = select_table("chicod46_imagens_beirario.shoe_class")
         st.session_state.data_class = data
@@ -68,6 +68,9 @@ if check_password():
             st.metric(label="Imagem Final", value=f"{50*(quantidade+1)}")
         
         st.dataframe(data)
+        
+        st.markdown("""<h3 style="text-align:left">*Após a mudança da página aguarde um pouco para as novas imagens serem carregadas!</h3>""", unsafe_allow_html=True)
+        st.markdown("***")
         
         tamanho = len(data)
         contador = 0
