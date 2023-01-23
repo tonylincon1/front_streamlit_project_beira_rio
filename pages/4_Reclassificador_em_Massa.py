@@ -3,7 +3,7 @@ import streamlit_analytics
 from outhers.utils import check_password, plot_image_class
 from outhers.conect_data import select_table
 
-endereco = 'http://54.83.166.236' #http://127.0.0.1:80
+endereco = 'http://54.83.166.236' #
 url_change_class_image = f'{endereco}/change_class_image'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
