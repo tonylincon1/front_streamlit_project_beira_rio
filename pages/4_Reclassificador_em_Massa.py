@@ -43,10 +43,10 @@ if check_password():
 
     if st.button('Imagens Classificadas', on_click=write_variable):
         st.session_state.reclassificacao_1 = True
-        data = select_table("chicod46_imagens_beirario.shoe_class")
-        st.session_state.data_class = data
         
     if st.session_state.reclassificacao_1:
+        data = select_table("chicod46_imagens_beirario.shoe_class")
+        st.session_state.data_class = data
         data = st.session_state.data_class
         data = data.rename(columns=({0:'nome',
                                     1:'clases_1'}))
