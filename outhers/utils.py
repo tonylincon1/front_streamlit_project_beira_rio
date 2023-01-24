@@ -166,7 +166,7 @@ def plot_image_class(linhas,url_change_class,headers):
                 my_slot2 = st.empty()
                 my_slot3 = st.empty()
                 my_slot4 = st.empty()
-                my_slot1.markdown(f"""<p style='text-align:center'>Imagem: {linhas.nome.iloc[idx]}<br>Classe Predita: {linhas.clases_1.iloc[idx]}""", unsafe_allow_html=True)
+                my_slot1.markdown(f"""<p style='text-align:center'>Classe Predita: {linhas.clases_1.iloc[idx]}""", unsafe_allow_html=True)
                 classe_avaliacao = my_slot2.selectbox("Qual a classe dessa imagem?",[
                     'CLASSE',
                     'BOTAS',
